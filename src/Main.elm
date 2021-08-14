@@ -70,7 +70,7 @@ update msg model =
         Add ->
             let
                 reminders =
-                    model.reminders ++ [ model.text ]
+                    model.text :: model.reminders
             in
             ( Model reminders "", save (Encode.list Encode.string reminders) )
 
