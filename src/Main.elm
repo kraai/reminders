@@ -94,14 +94,14 @@ view model =
     E.layout [] <|
         E.column [ E.padding 30, E.spacing 30 ] <|
             [ E.row
-                [ E.spacing 30 ]
-                [ EI.text [ onEnter Add ]
+                [ E.spacing 10 ]
+                [ EI.button [] { onPress = Just Add, label = E.text "Add" }
+                , EI.text [ onEnter Add ]
                     { onChange = Change
                     , text = model.text
                     , placeholder = Just <| EI.placeholder [] <| E.text "Reminder"
                     , label = EI.labelHidden "Reminder"
                     }
-                , EI.button [] { onPress = Just Add, label = E.text "Add" }
                 ]
             ]
                 ++ List.map viewReminder model.reminders
