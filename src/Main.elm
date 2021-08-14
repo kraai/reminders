@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser
 import Element as E
@@ -6,15 +6,28 @@ import Element.Input as EI
 import Html
 import Html.Events
 import Json.Decode as Decode
+import Json.Encode as Encode
 
 
 
 -- MAIN
 
 
-main : Program () Model Msg
+main : Program Encode.Value Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = init
+        , subscriptions = always Sub.none
+        , update = update
+        , view = view
+        }
+
+
+
+-- PORTS
+
+
+port save : Encode.Value -> Cmd msg
 
 
 
@@ -27,9 +40,18 @@ type alias Model =
     }
 
 
-init : Model
-init =
-    Model [] ""
+init : Encode.Value -> ( Model, Cmd Msg )
+init flags =
+    let
+        reminders =
+            case Decode.decodeValue (Decode.list Decode.string) flags of
+                Ok value ->
+                    value
+
+                Err _ ->
+                    []
+    in
+    ( Model reminders "", Cmd.none )
 
 
 
@@ -42,17 +64,25 @@ type Msg
     | Delete String
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Add ->
-            Model (model.reminders ++ [ model.text ]) ""
+            let
+                reminders =
+                    model.reminders ++ [ model.text ]
+            in
+            ( Model reminders "", save (Encode.list Encode.string reminders) )
 
         Change text ->
-            { model | text = text }
+            ( { model | text = text }, Cmd.none )
 
         Delete reminder ->
-            { model | reminders = List.filter ((/=) reminder) model.reminders }
+            let
+                reminders =
+                    List.filter ((/=) reminder) model.reminders
+            in
+            ( Model reminders "", save (Encode.list Encode.string reminders) )
 
 
 

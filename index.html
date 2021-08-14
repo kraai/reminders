@@ -1,0 +1,22 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Reminders</title>
+    <script type="text/javascript" src="elm.js"></script>
+  </head>
+  <body>
+    <div id="elm"></div>
+  </body>
+  <script type="text/javascript">
+    const reminders = localStorage.getItem('reminders');
+    const flags = reminders ? JSON.parse(reminders) : null;
+    const app = Elm.Main.init({
+	node: document.getElementById('elm'),
+	flags: flags
+    });
+    app.ports.save.subscribe(function(reminders) {
+	localStorage.setItem('reminders', JSON.stringify(reminders));
+    });
+  </script>
+</html>
