@@ -56,6 +56,7 @@ port save : Encode.Value -> Cmd msg
 type alias Model =
     { reminders : List String
     , text : String
+    , error : Maybe String
     }
 
 
@@ -70,7 +71,7 @@ init flags =
                 Err _ ->
                     []
     in
-    ( Model reminders "", Cmd.none )
+    ( Model reminders "" Nothing, Cmd.none )
 
 
 
@@ -87,25 +88,28 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Add ->
-            if String.isEmpty model.text || List.member model.text model.reminders then
-                ( model, Cmd.none )
+            if String.isEmpty model.text then
+                ( { model | error = Just "That reminder is empty.  Please enter a non-empty reminder." }, Cmd.none )
+
+            else if List.member model.text model.reminders then
+                ( { model | error = Just "That reminder already exists.  Please add a new reminder." }, Cmd.none )
 
             else
                 let
                     reminders =
                         model.text :: model.reminders
                 in
-                ( Model reminders "", save (Encode.list Encode.string reminders) )
+                ( Model reminders "" Nothing, save (Encode.list Encode.string reminders) )
 
         Change text ->
-            ( { model | text = text }, Cmd.none )
+            ( { model | text = text, error = Nothing }, Cmd.none )
 
         Delete reminder ->
             let
                 reminders =
                     List.filter ((/=) reminder) model.reminders
             in
-            ( Model reminders "", save (Encode.list Encode.string reminders) )
+            ( Model reminders "" Nothing, save (Encode.list Encode.string reminders) )
 
 
 
@@ -131,6 +135,7 @@ view model =
                     }
                 ]
             ]
+                ++ viewError model.error
                 ++ List.map viewReminder model.reminders
 
 
@@ -149,6 +154,16 @@ onEnter msg =
                     )
             )
         )
+
+
+viewError : Maybe String -> List (E.Element Msg)
+viewError error =
+    case error of
+        Just error_ ->
+            [ E.el [ Font.color (E.rgb 1 0 0) ] (E.text error_) ]
+
+        Nothing ->
+            []
 
 
 viewReminder : String -> E.Element Msg
