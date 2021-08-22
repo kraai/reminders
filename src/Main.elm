@@ -155,5 +155,30 @@ viewReminder reminder =
             , checked = False
             , label = EI.labelHidden "Delete"
             }
-        , E.text reminder
+        , toElement reminder
         ]
+
+
+toElement : String -> E.Element Msg
+toElement content =
+    let
+        parts =
+            String.split "*" content
+
+        italicizeEven spans =
+            case spans of
+                [] ->
+                    []
+
+                span :: rest ->
+                    E.text span :: italicizeOdd rest
+
+        italicizeOdd spans =
+            case spans of
+                [] ->
+                    []
+
+                span :: rest ->
+                    E.el [ Font.italic ] (E.text span) :: italicizeEven rest
+    in
+    E.row [] <| italicizeEven parts
