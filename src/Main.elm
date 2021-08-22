@@ -21,6 +21,7 @@ import Browser
 import Element as E
 import Element.Font as Font
 import Element.Input as EI
+import Element.Keyed as Keyed
 import Html
 import Html.Events
 import Json.Decode as Decode
@@ -148,15 +149,18 @@ onEnter msg =
 
 viewReminder : String -> E.Element Msg
 viewReminder reminder =
-    E.row [ E.spacing 10 ]
-        [ EI.checkbox []
-            { onChange = \_ -> Delete reminder
-            , icon = EI.defaultCheckbox
-            , checked = False
-            , label = EI.labelHidden "Delete"
-            }
-        , toElement reminder
-        ]
+    Keyed.el []
+        ( reminder
+        , E.row [ E.spacing 10 ]
+            [ EI.checkbox []
+                { onChange = \_ -> Delete reminder
+                , icon = EI.defaultCheckbox
+                , checked = False
+                , label = EI.labelHidden "Delete"
+                }
+            , toElement reminder
+            ]
+        )
 
 
 toElement : String -> E.Element Msg
