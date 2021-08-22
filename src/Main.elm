@@ -87,11 +87,15 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Add ->
-            let
-                reminders =
-                    model.text :: model.reminders
-            in
-            ( Model reminders "", save (Encode.list Encode.string reminders) )
+            if String.isEmpty model.text then
+                ( model, Cmd.none )
+
+            else
+                let
+                    reminders =
+                        model.text :: model.reminders
+                in
+                ( Model reminders "", save (Encode.list Encode.string reminders) )
 
         Change text ->
             ( { model | text = text }, Cmd.none )
