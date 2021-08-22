@@ -18,7 +18,7 @@
 port module Main exposing (..)
 
 import Browser
-import Element as E
+import Element
 import Element.Font as Font
 import Element.Input as Input
 import Element.Keyed as Keyed
@@ -118,21 +118,29 @@ update msg model =
 
 view : Model -> Html.Html Msg
 view model =
-    E.layout [] <|
-        E.column [ E.padding 30, E.spacing 30, E.width E.fill ] <|
-            [ E.row
-                [ E.spacing 10, E.width E.fill ]
-                [ Input.button [] { onPress = Just Add, label = E.text "Add" }
+    Element.layout [] <|
+        Element.column
+            [ Element.padding 30
+            , Element.spacing 30
+            , Element.width Element.fill
+            ]
+        <|
+            [ Element.row
+                [ Element.spacing 10, Element.width Element.fill ]
+                [ Input.button []
+                    { onPress = Just Add
+                    , label = Element.text "Add"
+                    }
                 , Input.text [ onEnter Add ]
                     { onChange = Change
                     , text = model.text
                     , placeholder =
-                        Just <| Input.placeholder [] <| E.text "Reminder"
+                        Just <| Input.placeholder [] <| Element.text "Reminder"
                     , label = Input.labelHidden "Reminder"
                     }
-                , E.link [ Font.color <| E.rgb 0 0 238 ]
+                , Element.link [ Font.color <| Element.rgb 0 0 238 ]
                     { url = "https://github.com/kraai/reminders"
-                    , label = E.text "Reminders"
+                    , label = Element.text "Reminders"
                     }
                 ]
             ]
@@ -140,9 +148,9 @@ view model =
                 ++ List.map viewReminder model.reminders
 
 
-onEnter : msg -> E.Attribute msg
+onEnter : msg -> Element.Attribute msg
 onEnter msg =
-    E.htmlAttribute
+    Element.htmlAttribute
         (Html.Events.on "keyup"
             (Decode.field "key" Decode.string
                 |> Decode.andThen
@@ -157,21 +165,23 @@ onEnter msg =
         )
 
 
-viewError : Maybe String -> List (E.Element Msg)
+viewError : Maybe String -> List (Element.Element Msg)
 viewError error =
     case error of
         Just error_ ->
-            [ E.el [ Font.color (E.rgb 1 0 0) ] (E.text error_) ]
+            [ Element.el [ Font.color (Element.rgb 1 0 0) ]
+                (Element.text error_)
+            ]
 
         Nothing ->
             []
 
 
-viewReminder : String -> E.Element Msg
+viewReminder : String -> Element.Element Msg
 viewReminder reminder =
     Keyed.el []
         ( reminder
-        , E.row [ E.spacing 10 ]
+        , Element.row [ Element.spacing 10 ]
             [ Input.checkbox []
                 { onChange = \_ -> Delete reminder
                 , icon = Input.defaultCheckbox
@@ -183,7 +193,7 @@ viewReminder reminder =
         )
 
 
-toElement : String -> E.Element Msg
+toElement : String -> Element.Element Msg
 toElement content =
     let
         parts =
@@ -195,7 +205,7 @@ toElement content =
                     []
 
                 span :: rest ->
-                    E.text span :: italicizeOdd rest
+                    Element.text span :: italicizeOdd rest
 
         italicizeOdd spans =
             case spans of
@@ -203,6 +213,7 @@ toElement content =
                     []
 
                 span :: rest ->
-                    E.el [ Font.italic ] (E.text span) :: italicizeEven rest
+                    Element.el [ Font.italic ] (Element.text span)
+                        :: italicizeEven rest
     in
-    E.row [] <| italicizeEven parts
+    Element.row [] <| italicizeEven parts
