@@ -14,7 +14,7 @@
 # License along with Reminders.  If not, see
 # <https://www.gnu.org/licenses/>.
 
-publish: public/elm.min.js
+publish: public/elm.min.js public/index.html
 	rsync --delete --recursive public/ aws.ftbfs.org:public_html/reminders
 
 elm.js: src/Main.elm
@@ -23,7 +23,10 @@ elm.js: src/Main.elm
 public/elm.min.js: elm.js
 	uglifyjs $< --compress 'pure_funcs="F2,F3,F4,F5,F6,F7,F8,F9,A2,A3,A4,A5,A6,A7,A8,A9",pure_getters,keep_fargs=false,unsafe_comps,unsafe' | uglifyjs --mangle >$@
 
+public/index.html: index.html
+	tr -d '\n' <$< | sed 's/[[:space:]]\+/ /g;s/\([),:;>{]\) /\1/g' >$@
+
 clean:
-	rm -f elm.js public/elm.min.js
+	rm -fr elm.js public
 
 .PHONY: clean publish
