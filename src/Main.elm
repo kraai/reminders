@@ -20,7 +20,7 @@ port module Main exposing (..)
 import Browser
 import Element as E
 import Element.Font as Font
-import Element.Input as EI
+import Element.Input as Input
 import Element.Keyed as Keyed
 import Html
 import Html.Events
@@ -122,12 +122,13 @@ view model =
         E.column [ E.padding 30, E.spacing 30, E.width E.fill ] <|
             [ E.row
                 [ E.spacing 10, E.width E.fill ]
-                [ EI.button [] { onPress = Just Add, label = E.text "Add" }
-                , EI.text [ onEnter Add ]
+                [ Input.button [] { onPress = Just Add, label = E.text "Add" }
+                , Input.text [ onEnter Add ]
                     { onChange = Change
                     , text = model.text
-                    , placeholder = Just <| EI.placeholder [] <| E.text "Reminder"
-                    , label = EI.labelHidden "Reminder"
+                    , placeholder =
+                        Just <| Input.placeholder [] <| E.text "Reminder"
+                    , label = Input.labelHidden "Reminder"
                     }
                 , E.link [ Font.color <| E.rgb 0 0 238 ]
                     { url = "https://github.com/kraai/reminders"
@@ -171,11 +172,11 @@ viewReminder reminder =
     Keyed.el []
         ( reminder
         , E.row [ E.spacing 10 ]
-            [ EI.checkbox []
+            [ Input.checkbox []
                 { onChange = \_ -> Delete reminder
-                , icon = EI.defaultCheckbox
+                , icon = Input.defaultCheckbox
                 , checked = False
-                , label = EI.labelHidden "Delete"
+                , label = Input.labelHidden "Delete"
                 }
             , toElement reminder
             ]
