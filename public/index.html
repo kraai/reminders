@@ -10,11 +10,10 @@
     <div id="elm"></div>
   </body>
   <script type="text/javascript">
-    const app = Elm.Main.init({
+    Elm.Main.init({
 	node: document.getElementById('elm'),
 	flags: JSON.parse(localStorage.getItem('reminders'))
-    });
-    app.ports.save.subscribe(function(reminders) {
+    }).ports.save.subscribe(function(reminders) {
 	localStorage.setItem('reminders', JSON.stringify(reminders));
     });
   </script>
