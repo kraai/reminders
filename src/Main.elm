@@ -87,7 +87,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Add ->
-            if String.isEmpty model.text then
+            if String.isEmpty model.text || List.member model.text model.reminders then
                 ( model, Cmd.none )
 
             else
