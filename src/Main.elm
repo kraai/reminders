@@ -118,34 +118,36 @@ update msg model =
 
 view : Model -> Html.Html Msg
 view model =
-    Element.layout [] <|
-        Element.column
-            [ Element.padding 30
-            , Element.spacing 30
-            , Element.width Element.fill
-            ]
-        <|
-            [ Element.row
-                [ Element.spacing 10, Element.width Element.fill ]
-                [ Input.button []
-                    { onPress = Just Add
-                    , label = Element.text "Add"
-                    }
-                , Input.text [ onEnter Add ]
-                    { onChange = Change
-                    , text = model.text
-                    , placeholder =
-                        Just <| Input.placeholder [] <| Element.text "Reminder"
-                    , label = Input.labelHidden "Reminder"
-                    }
-                , Element.link [ Font.color <| Element.rgb 0 0 238 ]
-                    { url = "https://github.com/kraai/reminders"
-                    , label = Element.text "Reminders"
-                    }
+    Html.main_ []
+        [ Element.layout [] <|
+            Element.column
+                [ Element.padding 30
+                , Element.spacing 30
+                , Element.width Element.fill
                 ]
-            ]
-                ++ viewError model.error
-                ++ List.map viewReminder model.reminders
+            <|
+                [ Element.row
+                    [ Element.spacing 10, Element.width Element.fill ]
+                    [ Input.button []
+                        { onPress = Just Add
+                        , label = Element.text "Add"
+                        }
+                    , Input.text [ onEnter Add ]
+                        { onChange = Change
+                        , text = model.text
+                        , placeholder =
+                            Just <| Input.placeholder [] <| Element.text "Reminder"
+                        , label = Input.labelHidden "Reminder"
+                        }
+                    , Element.link [ Font.color <| Element.rgb 0 0 238 ]
+                        { url = "https://github.com/kraai/reminders"
+                        , label = Element.text "Reminders"
+                        }
+                    ]
+                ]
+                    ++ viewError model.error
+                    ++ List.map viewReminder model.reminders
+        ]
 
 
 onEnter : msg -> Element.Attribute msg
